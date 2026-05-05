@@ -9,13 +9,14 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 export function useThemeColor(
   props: { light?: string; dark?: string },
   colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
+): string {
   const theme = useColorScheme() ?? 'light';
   const colorFromProps = props[theme];
 
   if (colorFromProps) {
     return colorFromProps;
   } else {
-    return Colors[theme][colorName];
+    // chart is a nested object — only string leaf values should be requested here
+    return Colors[theme][colorName] as unknown as string;
   }
 }
