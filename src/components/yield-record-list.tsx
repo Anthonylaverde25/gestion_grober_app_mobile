@@ -41,7 +41,7 @@ export function YieldRecordList({ records, isLoading, onExpand }: YieldRecordLis
     const packingColor = getYieldColor(item.packingYield ?? 0, c);
 
     return (
-      <View>
+      <View style={{ marginTop: Spacing.sm }}>
         <View style={styles.row}>
           {/* Time column */}
           <View style={styles.timeCol}>

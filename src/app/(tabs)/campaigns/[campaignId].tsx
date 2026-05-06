@@ -139,6 +139,10 @@ export default function CampaignDetailScreen() {
               records={yields ?? []}
               stats={stats}
               title="Tendencia de Rendimiento"
+              onExpand={() => router.push({
+                pathname: '/campaigns/[campaignId]/chart',
+                params: { campaignId }
+              })}
             />
           )}
 
