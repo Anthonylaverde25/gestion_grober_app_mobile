@@ -3,8 +3,8 @@
 
 export const Colors = {
   light: {
-    primary: '#0070f2',
-    primaryDark: '#0064d9',
+    primary: '#1d576d',
+    primaryDark: '#164354',
     background: '#f5f6f7',
     surface: '#ffffff',
     text: '#1d2d3e',
@@ -17,15 +17,15 @@ export const Colors = {
     warningLight: '#fff5e5',
     error: '#bb0000',
     errorLight: '#fff5f5',
-    tint: '#0070f2',
+    tint: '#1d576d',
     icon: '#6a6d70',          // legacy compat
     tabIconDefault: '#a0a0a0',
-    tabIconSelected: '#0070f2',
+    tabIconSelected: '#1d576d',
     divider: '#e5e5e5',
     shadow: 'rgba(0,0,0,0.08)',
     overlay: 'rgba(0,0,0,0.4)',
     chart: {
-      primary: '#0070f2',
+      primary: '#1d576d',
       secondary: '#107e3e',
       tertiary: '#e9730c',
       grid: '#e5e5e5',

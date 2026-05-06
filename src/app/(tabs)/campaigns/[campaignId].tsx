@@ -2,21 +2,21 @@ import React from 'react';
 import {
   View,
   ScrollView,
-  StyleSheet,
   RefreshControl,
-  TouchableOpacity,
 } from 'react-native';
 import { Text, ActivityIndicator, Surface } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors, Spacing, FontSize, BorderRadius } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { useCampaignYields } from '@/features/admin/hooks/useCampaignYields';
 import { YieldLineChart } from '@/components/yield-line-chart';
 import { YieldRecordList } from '@/components/yield-record-list';
 import { useQuery } from '@tanstack/react-query';
 import axiosClient from '@/infrastructure/api/axios-client';
+import { AppHeader } from '@/components/ui/app-header';
+import { StatusBar } from 'expo-status-bar';
+import { styles } from './[campaignId].styles';
 
 interface ApiCampaignDetail {
   id: string;
@@ -66,24 +66,17 @@ export default function CampaignDetailScreen() {
   const isLoading = loadingCampaign || loadingYields;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: c.background }]} edges={['top']}>
+    <View style={[styles.container, { backgroundColor: c.background }]}>
+      <StatusBar style="light" />
       <Stack.Screen options={{ headerShown: false }} />
 
-      {/* ── Header ── */}
-      <View style={[styles.header, { backgroundColor: c.surface, borderBottomColor: c.border }]}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <MaterialCommunityIcons name="arrow-left" size={22} color={c.text} />
-        </TouchableOpacity>
-        <View style={styles.headerTitle}>
-          <Text style={[styles.title, { color: c.text }]} numberOfLines={1}>
-            Campaña #{campaign?.codigo ?? '...'}
-          </Text>
-          <Text style={[styles.subtitle, { color: c.textSecondary }]} numberOfLines={1}>
-            {campaign?.machine?.name ?? 'Cargando...'} · {campaign?.article?.name ?? ''}
-          </Text>
-        </View>
-        {campaign && <StatusBadge status={campaign.status} c={c} />}
-      </View>
+      <AppHeader
+        title={`Campaña #${campaign?.codigo ?? '...'}`}
+        subtitle={`${campaign?.machine?.name ?? 'Cargando...'} · ${campaign?.article?.name ?? ''}`}
+        dark
+        showBack
+        elevated={false}
+      />
 
       {isLoading ? (
         <View style={styles.center}>
@@ -159,103 +152,6 @@ export default function CampaignDetailScreen() {
           <View style={{ height: Spacing.xxl * 2 }} />
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    gap: Spacing.sm,
-  },
-  backBtn: { padding: Spacing.xs },
-  headerTitle: { flex: 1 },
-  title: { fontSize: FontSize.lg, fontWeight: '700' },
-  subtitle: { fontSize: FontSize.xs, fontWeight: '500', marginTop: 2 },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.full,
-    gap: 5,
-  },
-  badgeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  badgeText: {
-    fontSize: FontSize.xs,
-    fontWeight: '700',
-  },
-  infoStrip: {
-    flexDirection: 'row',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    gap: Spacing.sm,
-    alignItems: 'center',
-  },
-  infoItem: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    justifyContent: 'center',
-  },
-  infoText: {
-    color: 'rgba(255,255,255,0.9)',
-    fontSize: 10,
-    fontWeight: '600',
-  },
-  infoDivider: {
-    width: 1,
-    height: 16,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-  },
-  kpiRow: {
-    flexDirection: 'row',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.md,
-    gap: Spacing.sm,
-  },
-  kpiCard: {
-    flex: 1,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.sm,
-    alignItems: 'center',
-    elevation: 1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-  },
-  kpiLabel: {
-    fontSize: 8,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-    marginBottom: 2,
-  },
-  kpiValue: {
-    fontSize: FontSize.lg,
-    fontWeight: '800',
-    fontVariant: ['tabular-nums'],
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    paddingVertical: Spacing.xxl,
-  },
-  loadingText: {
-    fontSize: FontSize.sm,
-    fontWeight: '500',
-    marginTop: Spacing.sm,
-  },
-});

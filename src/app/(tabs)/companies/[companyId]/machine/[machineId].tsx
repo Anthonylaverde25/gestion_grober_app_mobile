@@ -7,14 +7,15 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Text, ActivityIndicator, SegmentedButtons } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router, Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors, Spacing, FontSize, BorderRadius } from '@/constants/theme';
 import { useMachineCampaigns } from '@/features/admin/hooks/useMachineCampaigns';
 import { CampaignCard } from '@/components/campaign-card';
 import { Campaign } from '@/core/domain/entities';
+import { AppHeader } from '@/components/ui/app-header';
 
 export default function MachineDetailScreen() {
   const { companyId, machineId } = useLocalSearchParams<{
@@ -51,36 +52,19 @@ export default function MachineDetailScreen() {
   };
 
   return (
-    <SafeAreaView
+    <View
       style={[styles.container, { backgroundColor: c.background }]}
-      edges={['top']}
     >
+      <StatusBar style="light" />
       <Stack.Screen options={{ headerShown: false }} />
 
-      {/* ── Custom Header ── */}
-      <View
-        style={[
-          styles.header,
-          { backgroundColor: c.surface, borderBottomColor: c.border },
-        ]}
-      >
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <MaterialCommunityIcons name="arrow-left" size={22} color={c.text} />
-        </TouchableOpacity>
-        <View style={styles.headerTitle}>
-          <Text style={[styles.title, { color: c.text }]}>Horno / Máquina</Text>
-          <Text style={[styles.subtitle, { color: c.textSecondary }]}>
-            {activeCount} campaña{activeCount !== 1 ? 's' : ''} activa
-            {activeCount !== 1 ? 's' : ''}
-          </Text>
-        </View>
-        <View
-          style={[
-            styles.statusDot,
-            { backgroundColor: activeCount > 0 ? c.success : c.textMuted },
-          ]}
-        />
-      </View>
+      <AppHeader
+        title="Horno / Máquina"
+        subtitle={`${activeCount} campaña${activeCount !== 1 ? 's' : ''} activa${activeCount !== 1 ? 's' : ''}`}
+        dark
+        showBack
+        elevated={false}
+      />
 
       {/* ── Filter bar ── */}
       <View
@@ -185,7 +169,7 @@ export default function MachineDetailScreen() {
           <View style={{ height: Spacing.xxl }} />
         </ScrollView>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
-import { Text, Surface, Divider, IconButton } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, ScrollView, RefreshControl } from 'react-native';
+import { Text, Surface } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors, Spacing, FontSize, BorderRadius } from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 import { router, Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { AppHeader } from '@/components/ui/app-header';
+import { styles } from './notifications.styles';
 
 const MOCK_ALERTS = [
   {
@@ -56,23 +58,21 @@ export default function NotificationsScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: c.background }]} edges={['top']}>
+    <View style={[styles.container, { backgroundColor: c.background }]}>
+      <StatusBar style="light" />
       <Stack.Screen options={{ 
         headerShown: false,
         presentation: 'modal'
       }} />
 
-      {/* ── Header ── */}
-      <View style={[styles.header, { backgroundColor: c.surface, borderBottomColor: c.border }]}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <MaterialCommunityIcons name="close" size={24} color={c.text} />
-        </TouchableOpacity>
-        <View style={styles.headerTitle}>
-          <Text style={[styles.title, { color: c.text }]}>Alertas y Notificaciones</Text>
-          <Text style={[styles.subtitle, { color: c.textSecondary }]}>Eventos recientes del sistema</Text>
-        </View>
-        <IconButton icon="dots-vertical" size={20} onPress={() => {}} />
-      </View>
+      <AppHeader
+        title="Alertas y Notificaciones"
+        subtitle="Eventos recientes del sistema"
+        dark
+        showBack
+        onBack={() => router.back()}
+        elevated={false}
+      />
 
       <ScrollView 
         showsVerticalScrollIndicator={false}
@@ -105,82 +105,11 @@ export default function NotificationsScreen() {
           <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>AYER</Text>
         </View>
         <View style={styles.emptyPast}>
-          <Text style={{ color: c.textMuted, fontSize: FontSize.xs }}>No hay más alertas recientes</Text>
+          <Text style={{ color: c.textMuted, fontSize: 10, fontWeight: '500' }}>No hay más alertas recientes</Text>
         </View>
 
         <View style={{ height: Spacing.xxl }} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    gap: Spacing.sm,
-  },
-  backBtn: { padding: Spacing.xs },
-  headerTitle: { flex: 1 },
-  title: { fontSize: FontSize.lg, fontWeight: '700' },
-  subtitle: { fontSize: FontSize.xs, fontWeight: '500', marginTop: 2 },
-  list: { paddingTop: Spacing.sm },
-  sectionHeader: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-  },
-  sectionLabel: {
-    fontSize: FontSize.xs,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-  },
-  alertCard: {
-    flexDirection: 'row',
-    padding: Spacing.md,
-    marginHorizontal: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    gap: Spacing.md,
-    elevation: 1,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 2,
-  },
-  alertIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: BorderRadius.md,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  alertContent: { flex: 1 },
-  alertTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 4,
-  },
-  alertTitle: {
-    fontSize: FontSize.base,
-    fontWeight: '700',
-    flex: 1,
-    marginRight: 8,
-  },
-  alertTime: {
-    fontSize: 10,
-    fontWeight: '500',
-  },
-  alertMessage: {
-    fontSize: FontSize.xs,
-    lineHeight: 16,
-    fontWeight: '400',
-  },
-  emptyPast: {
-    alignItems: 'center',
-    paddingVertical: Spacing.xl,
-  },
-});
