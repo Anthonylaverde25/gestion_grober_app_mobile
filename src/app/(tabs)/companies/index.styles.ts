@@ -29,3 +29,7 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+// Required by Expo Router: every file inside /app must export a default.
+// eslint-disable-next-line import/no-default-export
+export default {};

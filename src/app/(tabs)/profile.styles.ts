@@ -92,3 +92,7 @@ export const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 });
+
+// Required by Expo Router: every file inside /app must export a default.
+// eslint-disable-next-line import/no-default-export
+export default {};

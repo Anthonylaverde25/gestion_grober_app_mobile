@@ -125,3 +125,7 @@ export const styles = StyleSheet.create({
     color: '#6a6d70',
   }
 });
+
+// Required by Expo Router: every file inside /app must export a default.
+// eslint-disable-next-line import/no-default-export
+export default {};

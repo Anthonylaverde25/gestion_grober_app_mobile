@@ -72,3 +72,7 @@ export const styles = StyleSheet.create({
     ...Typography.hint,
   },
 });
+
+// Required by Expo Router: every file inside /app must export a default.
+// eslint-disable-next-line import/no-default-export
+export default {};

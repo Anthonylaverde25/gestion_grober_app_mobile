@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   SectionList,
   RefreshControl,
 } from 'react-native';
-import { Text, ActivityIndicator, SegmentedButtons } from 'react-native-paper';
+import { Text, ActivityIndicator } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { Colors, BorderRadius } from '@/constants/theme';
+import { Colors } from '@/constants/theme';
 import { useQuery } from '@tanstack/react-query';
 import { MachineRepository } from '@/infrastructure/api/repositories/MachineRepository';
 import { CampaignCard } from '@/components/campaign-card';
@@ -20,7 +20,6 @@ import { styles } from './index.styles';
 export default function CampaignsListScreen() {
   const scheme = useColorScheme() ?? 'light';
   const c = Colors[scheme];
-  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('active');
 
   const {
     data: campaigns,
@@ -29,27 +28,16 @@ export default function CampaignsListScreen() {
     isRefetching,
     error,
   } = useQuery({
-    queryKey: ['campaigns-list', filter],
-    queryFn: () => {
-      if (filter === 'active') {
-        return MachineRepository.getActiveCampaigns();
-      }
-      return MachineRepository.getAllCampaigns();
-    },
+    queryKey: ['campaigns-list-active'],
+    queryFn: () => MachineRepository.getActiveCampaigns(),
     staleTime: 1000 * 60 * 2,
   });
 
-  const filtered = (campaigns ?? []).filter((ca) => {
-    if (filter === 'all') return true;
-    return ca.status === filter;
-  });
-
-  const activeCount = campaigns?.filter((c) => c.status === 'active').length ?? 0;
-  const completedCount = campaigns?.filter((c) => c.status === 'completed').length ?? 0;
+  const activeCampaigns = campaigns ?? [];
 
   const sections = React.useMemo(() => {
     const groups: { [key: string]: Campaign[] } = {};
-    filtered.forEach((ca) => {
+    activeCampaigns.forEach((ca) => {
       const coName = ca.companyName || 'Empresa Desconocida';
       if (!groups[coName]) groups[coName] = [];
       groups[coName].push(ca);
@@ -58,7 +46,7 @@ export default function CampaignsListScreen() {
       title: name,
       data: groups[name],
     }));
-  }, [filtered]);
+  }, [activeCampaigns]);
 
   const renderItem = ({ item }: { item: Campaign }) => (
     <Link
@@ -85,8 +73,8 @@ export default function CampaignsListScreen() {
     <View style={[styles.container, { backgroundColor: c.background }]}>
       <StatusBar style="light" />
       <AppHeader
-        title="Campañas"
-        subtitle="Gestión de rendimiento operativo"
+        title="Campañas Activas"
+        subtitle="Monitoreo de rendimiento en tiempo real"
         dark
         showBack
         elevated={false}
@@ -94,51 +82,29 @@ export default function CampaignsListScreen() {
 
       <View style={[styles.statsStrip, { backgroundColor: c.primary }]}>
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>{activeCount}</Text>
-          <Text style={styles.statLabel}>Activas</Text>
+          <Text style={styles.statValue}>{activeCampaigns.length}</Text>
+          <Text style={styles.statLabel}>En Producción</Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>{completedCount}</Text>
-          <Text style={styles.statLabel}>Completadas</Text>
+          <Text style={styles.statValue}>
+            {activeCampaigns.reduce((acc, curr) => acc + (curr.totalYieldRecords || 0), 0)}
+          </Text>
+          <Text style={styles.statLabel}>Registros Totales</Text>
         </View>
-        <View style={styles.statDivider} />
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>{campaigns?.length ?? 0}</Text>
-          <Text style={styles.statLabel}>Total</Text>
-        </View>
-      </View>
-
-      <View style={[styles.filterBar, { backgroundColor: c.surface, borderBottomColor: c.border }]}>
-        <SegmentedButtons
-          value={filter}
-          onValueChange={(v) => setFilter(v as typeof filter)}
-          buttons={[
-            { value: 'active', label: `Activas (${activeCount})` },
-            { value: 'completed', label: 'Completadas' },
-            { value: 'all', label: 'Todas' },
-          ]}
-          style={{ borderRadius: BorderRadius.sm }}
-          theme={{
-            colors: {
-              secondaryContainer: c.primary + '20',
-              onSecondaryContainer: c.primary,
-            },
-          }}
-        />
       </View>
 
       {isLoading ? (
         <View style={styles.center}>
           <ActivityIndicator size="large" color={c.primary} />
-          <Text style={[styles.loadingText, { color: c.textMuted }]}>Cargando campañas...</Text>
+          <Text style={[styles.loadingText, { color: c.textMuted }]}>Sincronizando operaciones...</Text>
         </View>
       ) : error ? (
         <View style={styles.center}>
           <MaterialCommunityIcons name="alert-circle-outline" size={40} color={c.error} />
-          <Text style={[styles.errorText, { color: c.error }]}>Error al cargar campañas</Text>
+          <Text style={[styles.errorText, { color: c.error }]}>Error de conexión</Text>
           <Text style={[styles.errorSub, { color: c.textMuted }]}>
-            {(error as any)?.response?.data?.message ?? (error as any)?.message ?? 'Error desconocido'}
+            No se pudieron obtener las campañas activas.
           </Text>
         </View>
       ) : (
@@ -155,7 +121,7 @@ export default function CampaignsListScreen() {
           ListHeaderComponent={
             <View style={styles.sectionHeader}>
               <Text style={[styles.sectionLabel, { color: c.textSecondary }]}>
-                {filtered.length} CAMPAÑA{filtered.length !== 1 ? 'S' : ''} · AGRUPADAS POR EMPRESA
+                {activeCampaigns.length} OPERACIÓ{activeCampaigns.length !== 1 ? 'NES' : 'N'} EN CURSO
               </Text>
             </View>
           }
@@ -163,9 +129,7 @@ export default function CampaignsListScreen() {
             <View style={styles.center}>
               <MaterialCommunityIcons name="factory" size={40} color={c.textMuted} />
               <Text style={[styles.emptyText, { color: c.textMuted }]}>
-                {filter === 'active'
-                  ? 'No hay campañas activas'
-                  : 'No hay campañas registradas'}
+                No hay campañas activas en este momento
               </Text>
             </View>
           }

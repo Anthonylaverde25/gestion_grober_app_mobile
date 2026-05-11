@@ -54,3 +54,8 @@ export const styles = StyleSheet.create({
     paddingVertical: Spacing.xl,
   },
 });
+
+// Required by Expo Router: every file inside /app must export a default.
+// This file only provides styles; the dummy export silences the route warning.
+// eslint-disable-next-line import/no-default-export
+export default {};
