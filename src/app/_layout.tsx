@@ -26,7 +26,7 @@ const paperLightTheme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: '#1d576d',
+    primary: '#1e293b',
     secondary: '#107e3e',
     surface: '#ffffff',
     background: '#f5f6f7',
@@ -40,7 +40,7 @@ const paperDarkTheme = {
   ...MD3DarkTheme,
   colors: {
     ...MD3DarkTheme.colors,
-    primary: '#4ba6fb',
+    primary: '#3b82f6',
     secondary: '#1db862',
     surface: '#1c2733',
     background: '#12171c',

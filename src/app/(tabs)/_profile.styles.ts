@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Spacing, BorderRadius, FontSize } from '@/constants/theme';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { CommonStyles } from '@/shared/theme/common-styles';
 import { Typography } from '@/shared/theme/typography';
 
@@ -92,7 +92,3 @@ export const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
 });
-
-// Required by Expo Router: every file inside /app must export a default.
-// eslint-disable-next-line import/no-default-export
-export default {};

@@ -6,6 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
+import { BrandLogo } from '@/components/brand-logo';
 import { styles } from './login.styles';
 
 export default function LoginScreen() {
@@ -34,7 +35,7 @@ export default function LoginScreen() {
           {/* Brand Header */}
           <View style={[styles.brandHeader, { backgroundColor: c.primary }]}>
             <View style={styles.logoCircle}>
-              <MaterialCommunityIcons name="shield-check" size={32} color="#ffffff" />
+              <BrandLogo size={70} />
             </View>
             <Text style={styles.brandName}>SISTEMA DE GESTIÓN</Text>
             <Text style={styles.brandSubtitle}>SUPERVISIÓN DE OPERACIONES MULTIEMPRESA</Text>

@@ -1,5 +1,5 @@
-import { StyleSheet, Platform } from 'react-native';
-import { Spacing, BorderRadius, FontSize } from '@/constants/theme';
+import { StyleSheet } from 'react-native';
+import { Spacing, BorderRadius } from '@/constants/theme';
 import { CommonStyles } from '@/shared/theme/common-styles';
 import { Typography } from '@/shared/theme/typography';
 
@@ -14,17 +14,19 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
   },
   brandHeader: {
-    height: '28%', // Reducido para mayor minimalismo
+    height: '30%', // Ajustado para dar más aire al logo vectorial
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: Spacing.xl,
-    borderBottomRightRadius: 60, // Cambio de dirección para un look más asimétrico y moderno
+    borderBottomRightRadius: 60,
   },
   logoCircle: {
-    width: 60, // Más pequeño y discreto
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    width: 80, // Aumentado para acomodar el logo vectorial de tamaño 70
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255,255,255,0.08)', // Fondo de vidrio sutil
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.15)', // Borde de vidrio para look premium
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,
@@ -127,5 +129,4 @@ export const styles = StyleSheet.create({
 });
 
 // Required by Expo Router: every file inside /app must export a default.
-// eslint-disable-next-line import/no-default-export
 export default {};

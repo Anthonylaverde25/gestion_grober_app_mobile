@@ -8,7 +8,7 @@ import { useAuthStore } from '@/infrastructure/store/auth-store';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { AppHeader } from '@/components/ui/app-header';
-import { styles } from './profile.styles';
+import { styles } from './_profile.styles';
 
 export default function ProfileScreen() {
   const scheme = useColorScheme() ?? 'light';
