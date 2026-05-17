@@ -7,11 +7,7 @@ import { useAuthStore } from '../store/auth-store';
 const debuggerHost = Constants.expoConfig?.hostUri?.split(':').shift();
 const localhost = debuggerHost || '10.0.2.2'; // Fallback to 10.0.2.2 for Android emulator
 
-const BASE_URL = Platform.select({
-  android: `http://${localhost}:8000/api`,
-  ios: `http://localhost:8000/api`,
-  default: `http://localhost:8000/api`,
-});
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || `https://gestiongroberapi-production.up.railway.app/api`;
 
 console.log(`[Axios] API Base URL: ${BASE_URL}`);
 

@@ -36,7 +36,9 @@ interface ApiYieldSummary {
       trend: 'up' | 'down' | 'stable';
     };
     chart_points: Array<{
-      label: string;        // "14:00" — pre-formatted by backend
+      label: string;        // "11/05 14h" — date + hour
+      date_label: string;   // "11/05"
+      time_label: string;   // "14:00"
       avg_forming: number;
       avg_packing: number;
       sample_count: number;
@@ -94,7 +96,9 @@ export const LineYieldRepository = {
         trend:        raw.kpis.trend,
       },
       chartPoints: raw.chart_points.map((p) => ({
-        label:       p.label,          // already "14:00"
+        label:       p.label,          // "11/05 14h"
+        dateLabel:   p.date_label,     // "11/05"
+        timeLabel:   p.time_label,     // "14:00"
         avgForming:  p.avg_forming,
         avgPacking:  p.avg_packing,
         sampleCount: p.sample_count,

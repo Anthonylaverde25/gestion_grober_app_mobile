@@ -66,11 +66,14 @@ export interface YieldStats {
 }
 
 /**
- * One hourly chart point — pre-formatted by the backend.
- * The `label` field ("14:00") is ready for gifted-charts; no frontend formatting needed.
+ * One hourly chart point — pre-formatted by the backend (last 72h).
+ * `label` includes date+hour ("11/05 14h") for the X axis.
+ * `dateLabel` and `timeLabel` are split for tooltip and day-boundary rendering.
  */
 export interface YieldChartPoint {
-  label: string;       // "14:00" — pre-formatted by backend (no frontend computation)
+  label: string;       // "11/05 14h" — full label for X axis
+  dateLabel: string;   // "11/05"     — date only (for day-boundary markers)
+  timeLabel: string;   // "14:00"     — time only (for tooltips)
   avgForming: number;
   avgPacking: number;
   sampleCount: number;

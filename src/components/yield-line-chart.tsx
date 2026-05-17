@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { LineChart } from 'react-native-gifted-charts';
@@ -9,7 +9,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Typography } from '@/shared/theme/typography';
 
 interface YieldLineChartProps {
-  /** Pre-processed chart points from the backend — label is ready-to-use. */
+  /** Pre-processed chart points from the backend (last 24h) — label is ready-to-use. */
   chartPoints: YieldChartPoint[];
   summary: CampaignYieldSummary;
   title?: string;
@@ -17,29 +17,24 @@ interface YieldLineChartProps {
 }
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const ZOOM_72H = 72;
 
 export function YieldLineChart({ chartPoints, summary, title, onExpand }: YieldLineChartProps) {
   const scheme = useColorScheme() ?? 'light';
   const c = Colors[scheme];
-  const [zoom72h, setZoom72h] = useState(false);
 
-  const canZoom = chartPoints.length > ZOOM_72H;
-
-  // When zoomed: last 72 points. Otherwise all.
-  const visiblePoints = useMemo(
-    () => (zoom72h && canZoom ? chartPoints.slice(-ZOOM_72H) : chartPoints),
-    [chartPoints, zoom72h, canZoom]
+  // X-axis labels: show hour label ("14:00") every 4 points (every 4 hours).
+  const step = 4;
+  const formingData = useMemo(
+    () => chartPoints.map((p, i) => ({
+      value: p.avgForming,
+      label: i % step === 0 ? p.timeLabel : '',
+    })),
+    [chartPoints, step]
   );
-
-  // Labels: show every Nth label to avoid crowding — all computation backend-side.
-  // Frontend just decides which pre-formatted labels to show based on density.
-  const step = Math.max(1, Math.ceil(visiblePoints.length / 10));
-  const formingData = visiblePoints.map((p, i) => ({
-    value: p.avgForming,
-    label: i % step === 0 ? p.label : '',
-  }));
-  const packingData = visiblePoints.map((p) => ({ value: p.avgPacking }));
+  const packingData = useMemo(
+    () => chartPoints.map((p) => ({ value: p.avgPacking })),
+    [chartPoints]
+  );
 
   const kpis = summary.kpis;
   const chartWidth = SCREEN_WIDTH - Spacing.md * 2 - Spacing.xl;
@@ -60,31 +55,10 @@ export function YieldLineChart({ chartPoints, summary, title, onExpand }: YieldL
           <View style={styles.headerTitleRow}>
             <MaterialCommunityIcons name="chart-line" size={14} color={c.textSecondary} />
             <Text style={[styles.listHeaderText, { color: c.textSecondary }]}>
-              {title?.toUpperCase() ?? 'TENDENCIA DE RENDIMIENTO'}
+              {title?.toUpperCase() ?? 'TENDENCIA DE RENDIMIENTO · ÚLT. 24H'}
             </Text>
           </View>
           <View style={styles.headerActions}>
-            {canZoom && (
-              <TouchableOpacity
-                onPress={() => setZoom72h((v) => !v)}
-                style={[
-                  styles.zoomBtn,
-                  {
-                    backgroundColor: zoom72h ? c.primary + '20' : 'transparent',
-                    borderColor: zoom72h ? c.primary : c.border,
-                  },
-                ]}
-              >
-                <MaterialCommunityIcons
-                  name="clock-time-four-outline"
-                  size={12}
-                  color={zoom72h ? c.primary : c.textMuted}
-                />
-                <Text style={[styles.zoomBtnText, { color: zoom72h ? c.primary : c.textMuted }]}>
-                  72h
-                </Text>
-              </TouchableOpacity>
-            )}
             {onExpand && (
               <TouchableOpacity onPress={onExpand} style={styles.expandBtn}>
                 <MaterialCommunityIcons name="arrow-expand" size={18} color={c.primary} />
@@ -126,18 +100,18 @@ export function YieldLineChart({ chartPoints, summary, title, onExpand }: YieldL
             startFillColor2="rgba(16, 185, 129, 0.12)"
             endFillColor="transparent"
             endFillColor2="transparent"
-            hideDataPoints={visiblePoints.length > 80}
+            hideDataPoints={chartPoints.length > 80}
             dataPointsColor="#6366f1"
             dataPointsColor2="#10b981"
             dataPointsRadius={3.5}
             dataPointsRadius2={3.5}
             xAxisColor={c.border}
             yAxisColor={c.border}
-            xAxisLabelTextStyle={{ color: c.textMuted, fontSize: 9 }}
-            yAxisTextStyle={{ color: c.textMuted, fontSize: 9 }}
+            xAxisLabelTextStyle={{ color: c.textMuted, fontSize: 9, fontWeight: '600' }}
+            yAxisTextStyle={{ color: c.textMuted, fontSize: 10, fontWeight: '600' }}
             rulesColor={c.border}
             rulesType="dashed"
-            showVerticalLines={visiblePoints.length <= 50}
+            showVerticalLines={chartPoints.length <= 50}
             verticalLinesColor={c.border}
             maxValue={100}
             noOfSections={5}
@@ -177,9 +151,7 @@ export function YieldLineChart({ chartPoints, summary, title, onExpand }: YieldL
             <Text style={styles.legendText}>Packing</Text>
           </View>
           <Text style={[styles.recordCount, { color: c.textMuted }]}>
-            {zoom72h && canZoom
-              ? `${visiblePoints.length} pts · últ. 72h`
-              : `${chartPoints.length} pts · campaña`}
+            {chartPoints.length} pts · últ. 24h
           </Text>
         </View>
       </View>
@@ -210,8 +182,6 @@ const styles = StyleSheet.create({
   chartWrapper:     { alignItems: 'flex-start', overflow: 'hidden' },
   listHeaderText:   { ...Typography.label, fontSize: 10, color: '#9ba4ae' },
   expandBtn:        { padding: 4 },
-  zoomBtn:          { flexDirection: 'row', alignItems: 'center', gap: 3, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 1 },
-  zoomBtnText:      { fontSize: 10, fontWeight: '700' },
   statsRow:         { flexDirection: 'row', justifyContent: 'space-between', paddingTop: Spacing.xs },
   statsGroupLeft:   { flexDirection: 'row', gap: Spacing.lg },
   statItem:         { minWidth: 40 },
